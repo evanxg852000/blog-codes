@@ -42,7 +42,7 @@ class Storage(object):
             raise KeyError('The key `{key}` does not exists')
         return self._db.get(key)
 
-    def keys(self):
+    def list(self):
         return [(key, self._db.get(key)) for key in self._db.getall()]
 
     def delete(self, key):
@@ -86,7 +86,12 @@ def create(config, name):
 @pass_config
 def list(config):
     '''Lists all entries in key space'''
-    click.echo(f'listing keys in {config.space}')
+    try:
+        entries = config.storage.list()
+        for (k, v) in entries:
+            click.echo(f' {k} -> {v}')
+    except Exception:
+        click.echo(f'💥 [error] listing entries')
 
 @main.command()
 @click.argument('key')
@@ -94,20 +99,28 @@ def list(config):
 @pass_config
 def put(config, key, value):
     '''Puts an entry in key space'''
-    click.echo(f'saving {key} -> {value} in {config.space}')
-
+    if not config.storage.set(key, value) :
+        click.echo(f'💥 [error] saving {key} -> {value} in {config.space}')
+    
 @main.command()
 @click.argument('key')
 @pass_config
 def get(config, key):
     '''Gets an entry from key space'''
-    click.echo(f'fetching {key} from {config.space}')
+    try:
+        v = config.storage.get(key)
+        click.echo(v)
+    except Exception:
+        click.echo(f'💥 [error] {key} does not exist in {config.space}')
 
 @main.command()
 @click.argument('key')
 @pass_config
 def delete(config, key):
     '''Deletes an entry in key space'''
-    click.echo(f'deleting {key} from {config.space}')
+    try:
+        config.storage.delete(key)
+    except Exception:
+       click.echo(f'💥 [error] {key} does not exist in {config.space}')
 
 

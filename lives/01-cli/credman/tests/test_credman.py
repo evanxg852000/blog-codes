@@ -1,5 +1,8 @@
+import pytest
 from click.testing import CliRunner
 from credman import main, Storage
+
+
 
 runner = CliRunner()
 
@@ -21,3 +24,6 @@ def test_storage():
     assert store.set('b', 5) == True
 
     assert store.get('a') == 12
+
+    with pytest.raises(Exception):
+        store.delete('v')

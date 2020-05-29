@@ -55,3 +55,22 @@ def about(*args, **kwargs):
 print(routes['home/'](23, 4, ev=3))
 
 ```
+
+
+
+## Unit test
+
+```python 
+
+def add(a, b):
+    return a + b
+
+class CircularBufferTest(unittest.TestCase):
+    def test_add(self):
+        self.assertEqual(add(5,4), 9)
+
+
+if __name__ == '__main__':
+    unittest.main()
+
+```
